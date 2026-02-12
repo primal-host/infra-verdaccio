@@ -9,7 +9,7 @@ services:
       - ./config.yaml:/verdaccio/conf/config.yaml:ro
       - verdaccio-storage:/verdaccio/storage
     networks:
-      - proxy
+      - infra
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.verdaccio.rule=Host(`verdaccio.localhost`) || Host(`verdaccio.primal.host`)"
@@ -19,5 +19,5 @@ volumes:
   verdaccio-storage:
 
 networks:
-  proxy:
+  infra:
     external: true
