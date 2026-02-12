@@ -1,0 +1,23 @@
+services:
+  verdaccio:
+    image: verdaccio/verdaccio:latest
+    container_name: infra-verdaccio
+    restart: unless-stopped
+    ports:
+      - "4873:4873"
+    volumes:
+      - ./config.yaml:/verdaccio/conf/config.yaml:ro
+      - verdaccio-storage:/verdaccio/storage
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.verdaccio.rule=Host(`verdaccio.localhost`) || Host(`verdaccio.primal.host`)"
+      - "traefik.http.services.verdaccio.loadbalancer.server.port=4873"
+
+volumes:
+  verdaccio-storage:
+
+networks:
+  proxy:
+    external: true
