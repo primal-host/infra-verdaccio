@@ -12,7 +12,20 @@ services:
       - infra
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.verdaccio.rule=Host(`verdaccio.localhost`) || Host(`verdaccio.primal.host`)"
+      # Production (HTTPS)
+      - "traefik.http.routers.verdaccio.rule=Host(`verdaccio.primal.host`)"
+      - "traefik.http.routers.verdaccio.entrypoints=https"
+      - "traefik.http.routers.verdaccio.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.verdaccio.middlewares=noknok-auth@docker"
+      # Production HTTP->HTTPS redirect
+      - "traefik.http.routers.verdaccio-redirect.rule=Host(`verdaccio.primal.host`)"
+      - "traefik.http.routers.verdaccio-redirect.entrypoints=http"
+      - "traefik.http.routers.verdaccio-redirect.middlewares=https-redirect"
+      # Local (HTTP)
+      - "traefik.http.routers.verdaccio-local.rule=Host(`verdaccio.localhost`)"
+      - "traefik.http.routers.verdaccio-local.entrypoints=http"
+      - "traefik.http.routers.verdaccio-local.middlewares=noknok-auth@docker"
+      # Service
       - "traefik.http.services.verdaccio.loadbalancer.server.port=4873"
 
 volumes:
